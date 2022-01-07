@@ -24,7 +24,6 @@ public class Register extends HttpServlet {
         String pass=req.getParameter("pass");
         String cnfpass=req.getParameter("cnfpass");
         String clg=req.getParameter("clg").replaceAll(" ", "_");
-        System.out.println(clg);
         String pool=req.getParameter("pool");
         int quesno=Integer.parseInt(req.getParameter("quesno"));
         if(id=="" || pass=="" || cnfpass=="" || clg=="" )
@@ -38,32 +37,46 @@ public class Register extends HttpServlet {
                  try 
                  {
                      Statement st = Connections.makeConnection();
-                     try 
+                     ResultSet  rs=null;
+                     rs=st.executeQuery("select college from participants where college='"+clg+"'");
+                     if(rs.next())
                      {
-                    	 st.executeUpdate("insert into participants values('"+clg+"','"+id+"','"+pass+"','"+pool+"',"+quesno+",0)");
+                    	 resp.getWriter().print("clg");
                      }
-                     catch(java.sql.SQLIntegrityConstraintViolationException e)
+                     else 
                      {
-                    	 throw e;
+                    	 rs=st.executeQuery("select id from participants where id='"+id+"'");
+                    	 if(rs.next())
+                         {
+                        	 resp.getWriter().print("id");
+                         }
+                    	 else
+                    	 {
+                    		 rs=st.executeQuery("select * from participants where pool='"+pool+"'and ques="+quesno);
+                    		 if(rs.next())
+                    		 {
+                    			 resp.getWriter().print("pool");
+                    		 }
+                    		 else
+                    		 {
+                        		 st.executeUpdate("insert into participants values('"+clg+"','"+id+"','"+pass+"','"+pool+"',"+quesno+",0)");
+                                 st.executeUpdate("create table "+clg+ "(questag varchar2(50),marks int)");
+                                 st.execute("alter table "+clg+" add constraint "+clg+"pk PRIMARY KEY (questag)");
+                                 
+                               	 File dir = new File("C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\codes\\"+clg);
+                               	 dir.mkdirs();
+                               	 rs=st.executeQuery("select questag from questions");
+                               	 while(rs.next())
+                               		 new File("C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\codes\\"+clg+"\\"+rs.getString(1)).mkdirs();
+                               	resp.getWriter().print("true");
+                    		 }
+                    	 }
                      }
-                     st.executeUpdate("create table "+clg+ "(questag varchar2(50),marks int)");
-                     st.execute("alter table "+clg+" add constraint "+clg+"pk PRIMARY KEY (questag)");
-                     
-                   	 File dir = new File("C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\codes\\"+clg);
-                   	 dir.mkdirs();
-                   	 ResultSet rs=st.executeQuery("select questag from questions");
-                   	 while(rs.next())
-                   		 new File("C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\codes\\"+clg+"\\"+rs.getString(1)).mkdirs();
-                   	 resp.getWriter().print("true");
-                    //resp.sendRedirect("index.jsp");
-                 }
-                 catch(java.sql.SQLIntegrityConstraintViolationException e)
-                 {
-                	 resp.getWriter().print("rep");
+                    
+                   	 
                  }
                  catch (Exception e) 
                  {
-    	           	  System.out.println("register");
     	           	  resp.getWriter().print("false");
     	              System.out.println(e);
                  }
@@ -75,7 +88,7 @@ public class Register extends HttpServlet {
              }
              else
              {
-            	 //resp.sendRedirect("index.jsp");
+            	 System.out.println("register2");
              }
         }
         

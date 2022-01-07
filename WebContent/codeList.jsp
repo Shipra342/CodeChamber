@@ -101,7 +101,7 @@ body{
 </div>
 <%
 				try{
-					rs = st.executeQuery("select questag,marks from questions,participants,activeSessions where activeSessions.pool='"+pool+"' and participants.id=activeSessions.id and questions.quesno=participants.ques and activeSessions.id <> '"+clgid+"'");
+					rs = st.executeQuery("select questag,marks"+pool+" from questions,participants,activeSessions where activeSessions.pool='"+pool+"' and participants.id=activeSessions.id and questions.quesno=participants.ques and activeSessions.id <> '"+clgid+"'");
 					while(rs.next())
 					{
 						ques = rs.getString(1);
@@ -123,13 +123,16 @@ body{
 				{
 					System.out.println("code list1 : "+e);			
 				}
-			Connections.closeConnection();
 		}
 	catch(Exception e)
 	{
-		Connections.closeConnection();
+		
 		response.sendRedirect("index.jsp");
 		System.out.println("code list "+e);
+	}
+	finally
+	{
+		Connections.closeConnection();
 	}
 %>
 <script type="text/javascript">

@@ -88,14 +88,12 @@ public class Compiler extends HttpServlet
 					command="gcc "+path+"\\"+file+".c -o "+path+"\\c"+file;
 				else if(lang.equals("cpp"))
 					command="g++ "+path+"\\"+file+".cpp -o "+path+"\\cpp"+file;
-				else if(lang.equals("py"))
-					command="python "+path+"\\"+file+".py";
-				
+								
 			  	Process pro = Runtime.getRuntime().exec(command);
 		        BufferedReader inE = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
 		        while ((line = inE.readLine()) != null) 
 		        	er=er+line+"\n";
-	        	if(pro.exitValue()==0 && !lang.equals("py"))
+	        	if(pro.exitValue()==0)
 			        {    
 			        	String out="cmd /c "+path+"\\"+lang+file+" < C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\testcases\\"+file+"\\t1.txt > "+path+"\\"+lang+"out.txt";
 			        	t=new ProRun(out);
@@ -151,8 +149,6 @@ public class Compiler extends HttpServlet
 						command="gcc "+path+"\\"+file+".c -o "+path+"\\c"+file;
 					else if(lang.equals("cpp"))
 						command="g++ "+path+"\\"+file+".cpp -o "+path+"\\cpp"+file;
-					else if(lang.equals("py"))
-						command="python "+path+"\\"+file+".py";
 				  	Process pro = Runtime.getRuntime().exec(command);
 			        BufferedReader inE = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
 			        while ((line = inE.readLine()) != null) 
@@ -163,7 +159,7 @@ public class Compiler extends HttpServlet
 			        	return b;
 			        }else
 			        {
-			        	if(pro.exitValue()==0 && !lang.equals("py"))
+			        	if(pro.exitValue()==0)
 				        {    
 				        	String out="cmd /c "+path+"\\"+lang+file+" < C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\testcases\\"+file+"\\t1.txt > "+path+"\\"+lang+"out.txt";
 				        	t=new ProRun(out);
@@ -174,7 +170,15 @@ public class Compiler extends HttpServlet
 				        	}catch(Exception e)
 				        	{}
 				        	//runProcess(out);
+				        	if(((ProRun)t).bo==false)
+				        	{
+				        		System.out.println("cj");
+				        		b.setError("infinite loop found");
+				        		System.out.println("error aayi "+b.getError());
+				        		return b;
+				        	}
 				        }
+			        	
 			        }
 		    	   try
 		    	   {
@@ -239,22 +243,4 @@ public class Compiler extends HttpServlet
 		}
 		return new Bean();
 	}
-
-	
-	private static String runJavaFile(String path,String file)
-	{
-		String s="";
-		try
-		{
-           s=s+runProcess("javac "+path+file+".java");
-           s=s+runProcess("java -cp "+path+file);
-       } 
-		catch (Exception e) 
-		{
-           e.printStackTrace();
-       }
-		return s.replace(file,"Your Code");
-	}
-	
-	
 }

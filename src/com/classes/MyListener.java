@@ -23,9 +23,6 @@ import com.connections.Connections;
 	       {
 	    	   Statement st = Connections.makeConnection();
                System.out.println(st.executeUpdate("delete from activeSessions where college='"+clg+"'"));
-               //temporary code line 
-               st.executeUpdate("delete from "+clg);
-               
                Connections.closeConnection();
 	       }
 	       catch(Exception e)   

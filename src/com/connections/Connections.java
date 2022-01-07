@@ -8,8 +8,8 @@ public class Connections
     public static Statement makeConnection()
     {
         try{
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        c=DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306","sahuamit127","y5SRo2N20O#@");
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        c=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:orcle","system","1234");
         st=c.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
         }catch(Exception e)
         {

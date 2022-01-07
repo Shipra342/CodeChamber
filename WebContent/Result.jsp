@@ -55,7 +55,7 @@
 				<%}
 					if(!err.equals("")){
 				%>
-						<pre><%=err %></pre>
+						<pre><%=err.trim() %></pre>
 				<%
 					}else
 					{
@@ -71,7 +71,7 @@
 				%>
 				
 					<h3>Expected Output</h3>
-					<pre><%=ans1 %></pre>
+					<pre><%=ans1.trim() %></pre>
 				
 				</div>	
 		<%
@@ -114,7 +114,7 @@
 						</td>
 						<td>
 						<%if(b.getQ(3)==true){%> <%=b.getMark() %> 
-							<%}else %> 
+							<%}else %> 0
 						</td>
 					</tr>
 					

@@ -51,7 +51,11 @@ tr:nth-child(even) {
 		}
 	}catch(Exception e)
   {
-		
+		System.out.println("leader");
+  }
+  finally
+  {
+	  Connections.closeConnection();
   }
 	%>
 </table>

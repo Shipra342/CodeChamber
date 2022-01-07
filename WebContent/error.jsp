@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<p> Sorry you are not allowed to enter the contest ...</p><br>
+	<p> Sorry, wrong username or password. ...</p><br>
 	<%	
 		out.println("Your IP Address is "+request.getRemoteAddr()); 
 	%>

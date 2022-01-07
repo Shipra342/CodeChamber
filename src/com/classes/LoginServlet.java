@@ -42,26 +42,27 @@ public class LoginServlet extends HttpServlet {
                 	  st.executeUpdate("insert into activeSessions values('"+clg+"','"+id+"','"+pool+"',1)");
                 	  System.out.println(clg+" logged in");
                 	  Connections.closeConnection();
-                  	  resp.sendRedirect("ajaxCode.jsp");
+                  	  resp.sendRedirect("questions.jsp");
                   }
                   else
                   {
-                	  Connections.closeConnection();
                 	  resp.sendRedirect("error.jsp");
                   }
                   
               } 
               catch(SQLIntegrityConstraintViolationException e)
               {
-            	  System.out.println(e);
-            	  Connections.closeConnection();
-            	  resp.sendRedirect("ajaxCode.jsp");
+            	  	  System.out.println(e);  
+            	  resp.sendRedirect("index.jsp");
               }
               catch (Exception e) 
               {
+            	  System.out.println(e+" : login serv");
+            	  resp.sendRedirect("index.jsp");
+              }
+              finally
+              {
             	  Connections.closeConnection();
-            	  System.out.println("login");
-                  System.out.println(e);
               }
         }
         

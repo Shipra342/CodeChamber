@@ -65,17 +65,14 @@ public class Compile {
 	        	String er="",line="",command="";
 				Bean b=new Bean();
 				if(lang.equals("c"))
-					command="gcc "+path+"\\"+file+".c -o "+path+"\\c"+file;
+					command="cmd /c gcc "+path+"\\"+file+".c -o "+path+"\\c"+file;
 				else if(lang.equals("cpp"))
-					command="g++ "+path+"\\"+file+".cpp -o "+path+"\\cpp"+file;
-				else if(lang.equals("py"))
-					command="python "+path+"\\"+file+".py";
-				
+					command="cmd /c g++ "+path+"\\"+file+".cpp -o "+path+"\\cpp"+file;
 			  	Process pro = Runtime.getRuntime().exec(command);
 		        BufferedReader inE = new BufferedReader(new InputStreamReader(pro.getErrorStream()));
 		        while ((line = inE.readLine()) != null) 
 		        	er=er+line+"\n";
-	        	if(pro.exitValue()==0 && !lang.equals("py"))
+	        	if(pro.exitValue()==0)
 			        {    
 			        	String out="cmd /c "+path+"\\"+lang+file+" < C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\testcases\\"+file+"\\t1.txt > "+path+"\\"+lang+"out.txt";
 			        	t=new ProRun(out);
@@ -85,7 +82,6 @@ public class Compile {
 			        	Thread.sleep(3000);
 			        	}catch(Exception e)
 			        	{}
-			        	//runProcess(out);
 			        }
 	        	if(t==null)
 	        	{
@@ -159,7 +155,7 @@ public class Compile {
 		    	   try
 		    	   {
 		    		   	Statement st = Connections.makeConnection();
-			        	ResultSet rs=st.executeQuery("select marks from questions where questag='"+file+"'" );
+			        	ResultSet rs=st.executeQuery("select marks"+pool+" from questions where questag='"+file+"'" );
 			        	rs.next();
 			        	int marks=rs.getInt(1);
 			        	b.setMark(marks/3);
@@ -198,7 +194,7 @@ public class Compile {
 			        		}
 			        		if(b.getTstpsd()==3)
 			        		{
-			        			st.executeUpdate("update questions set marks=marks/2 where questag='"+questag+"'");
+			        			st.executeUpdate("update questions set marks"+pool+"=marks"+pool+"/2 where questag='"+questag+"'");
 			        			st.executeUpdate("update activeSessions set active=0 where id = (select participants.id from questions,participants where participants.ques=questions.quesno and questag='"+questag+"' and pool='"+pool+"')");
 			        			
 			        		}

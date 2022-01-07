@@ -23,11 +23,10 @@
 	    <%
 	    	if((String)request.getAttribute("college")!=null)
 	    	{
-	    		response.sendRedirect("azaxCode.jsp");
+	    		response.sendRedirect("questions.jsp");
 	    	}
 	    	else
 	    	{
-	    		//System.out.println("pal count".replace(" ",""));
 	    %>    
 		<div class="header" style="min-height:80px;border-radius:5px;box-shadow: 10px 10px 5px grey;border:none;background-color:green" id="myHeader">
 			<div style="position:absolute;top:25px;right:30px;">
@@ -180,6 +179,7 @@
 			
 			function register()
 			{
+				
 				if( document.myForm.clg.value == "" ) {
 		            alert( "Please provide your college name!" );
 		            document.myForm.clg.focus() ;
@@ -203,8 +203,8 @@
 					}
 				else
 				{
+					alert('pressed');
 					var frm = $('#myForm');
-					alert('d');
 					$.ajax({
 						type: frm.attr('method'),
 						url: frm.attr('action'),
@@ -212,19 +212,79 @@
 						success: function(data){
 							if(data=='true')
 								{
-									alert('Registered Successfully\nNow you can Login');
+									if(window.confirm('Registered Successfully\nNow you can Login'))
+										{
+											window.location="index.jsp";
+										}
+									else
+										{
+											window.location="index.jsp";
+										}
 								}
-							else if(data=='rep')
+							else if(data=='false')
 								{
-									alert('Registeration Failed!!!\nMay be you are already registered');
+							
+									if(window.confirm('Registeration Failed!'))
+									{
+										//window.location="index.jsp";
+									}
+									else
+									{
+										//window.location="index.jsp";
+									}
 								}
+							else if(data=='id')
+							{
+						
+								if(window.confirm('Username already taken!'))
+								{
+									//window.location="index.jsp";
+								}
+								else
+								{
+									//window.location="index.jsp";
+								}
+							}
+							else if(data=='clg')
+							{
+						
+								if(window.confirm('college name is already taken!'))
+								{
+									//window.location="index.jsp";
+								}
+								else
+								{
+									//window.location="index.jsp";
+								}
+							}
+							else if(data=='pool')
+							{
+						
+								if(window.confirm('selected pair of pool and ques has alreday been taken!'))
+								{
+									window.location="index.jsp";
+								}
+								else
+								{
+									window.location="index.jsp";
+								}
+							}
 							else
+							{
+								if(window.confirm('unknown error!'))
 								{
-									alert('Registeration Failed!!');
+									
 								}
+								else
+								{
+									
+								}
+							}
+							
 						}
 					});
 				}
+				
 			}
 	
 		

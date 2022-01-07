@@ -14,6 +14,7 @@
 				try{
 					
                 String pool =(String)request.getParameter("pool");
+                System.out.println(pool);
                 Statement st = Connections.makeConnection();
                 ResultSet rs = st.executeQuery("select qno from ques where qno not in (select ques from participants where pool = '"+pool+"') order by qno");
                 while (rs.next()) {

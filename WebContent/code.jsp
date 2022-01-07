@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ page import="com.connections.*,java.sql.*,java.io.IOException,com.classes.Bean" %>
+<%@ page import="com.connections.*,java.sql.*,java.io.*,java.util.*,com.classes.Bean" %>
 
 <!DOCTYPE html>
 <html style="scroll-behavior:smooth">
@@ -61,22 +61,45 @@
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif;background-color:#f1f1f1;">
 <%! int clgScore; 
-	String clgid,clg,pool;
+	String clgid,clg,pool,dcode;
+	String questag,ques,ipf,opf,cons,test1,ans1,err,yo,eo,regCode;
+	Bean b;
+	Statement st;
+	ResultSet rs;
+	FileWriter writer;
+	File file;
 %>
 
-<% 
+<%
+
+questag=request.getParameter("questag");
 clg= (String) session.getAttribute("college");
 clgid=(String) session.getAttribute("id");
 pool=(String) session.getAttribute("pool");
 if(clg==null)
 {
-	response.sendRedirect("index.jsp");
-}
 %>
-
+	<script>
+	window.location="index.jsp";
+	</script>
 <%
+}
 	try 
 	{
+		try
+		{
+			File f = new File("C:\\Users\\Shibbu\\eclipse-workspace\\CodeChamber\\codes\\"+clg+"\\"+questag+"\\"+questag+".c");
+			Scanner sc = new Scanner(f);
+			sc.useDelimiter("\\Z");
+			dcode=sc.next();
+			sc.close();
+		}
+		catch(Exception e)
+		{
+			//do nothing
+		}
+		
+		
 		Statement st = Connections.makeConnection();
 		ResultSet rs=null;
 		
@@ -95,19 +118,31 @@ if(clg==null)
 			{
 				Connections.closeConnection();
 				//session.invalidate();
-				response.sendRedirect("loggedOut.html");
+				%>
+				<script>
+				window.location.assign("loggedOut.html");
+				</script>
+		<%
 			}
 		}
 		else
 		{
 			Connections.closeConnection();
-			response.sendRedirect("index.jsp");
+			%>
+			<script>
+			window.location.assign("index.jsp");
+			</script>
+	<%
 		}
 	}
 	catch(Exception e)
 	{
 		Connections.closeConnection();
-		response.sendRedirect("index.jsp");
+%>
+		<script>
+		window.location.assign("timeover.html");
+		</script>
+<%
 		System.out.println(e);
 	}
 %>
@@ -120,18 +155,10 @@ if(clg==null)
 		<div style="font-size:20px;text-align:center;float:right;width:20%;">Points: <%=clgScore %></div>
 	</div>
 </div>
-
-<%!
-	String questag,ques,ipf,opf,cons,test1,ans1,err,yo,eo,regCode;
-	Bean b;
-	Statement st;
-	ResultSet rs;
-
-%>
 <div style="padding:0px 30px 10px 30px;margin-top:130px">
 <div style="margin:20px;width:60%;color:black;">
 <%
-	questag=request.getParameter("questag");
+
 	try 
 	{
 		st = Connections.makeConnection();
@@ -199,15 +226,13 @@ if(clg==null)
 									Enter Your Code Here
 								</div>
 								<div style="width:30%;float:right">
-									<select name="opt" id="slct" style="background-color:whitesmoke;float:right">
-										<option value="c" <% if(request.getParameter("opt")!=null && request.getParameter("opt").equals("c")){%> selected<%} %>>C</option>
-										<option value="cpp" <% if(request.getParameter("opt")!=null && request.getParameter("opt").equals("cpp")){%> selected<%} %>>C++</option>
-										<option value="java" <% if(request.getParameter("opt")!=null && request.getParameter("opt").equals("java")){%> selected<%} %>>Java</option>
-										<option value="py" <% if(request.getParameter("opt")!=null && request.getParameter("opt").equals("python")){%> selected<%} %>>Python</option>
+									<select name="opt" id="slct" onchange="loadDefault(this.value)" style="background-color:whitesmoke;float:right">
+										<option value="c">C</option>
+										<option value="cpp">C++</option>
 									</select>
 								</div>
 							</div>
-							<textarea id="cd" name="code" style="margin-left:0px;margin-top:5px;"></textarea>
+							<textarea id="cd" style="margin-left:0px;margin-top:5px;"></textarea>
 							<script>
 							var myCode=document.getElementById("cd");
 							var editor = CodeMirror.fromTextArea(myCode, {
@@ -222,8 +247,8 @@ if(clg==null)
 						<div style="margin-top:10px"></div>	
 						</div>
 						<div style="height:50px;margin-top:10px;width:100%">
-									<button type="button" class="sbt" value="submit" onclick="compile(this.value)" name="sbt"  style="float:right;margin:2px;background-color:#1E90FF;border:none;border-radius:2px;height:30px;width:10%">SUBMIT</button>
-									<button type="button" class="sbt" value="compile" onclick="compile(this.value)" name="sbt" style="float:right;margin:2px;background-color:#228B22;border:none;border-radius:2px;height:30px;width:10%">COMPILE</button>
+									<button type="button" class="sbt" value="submit" onclick="compile(this.value)" name="sbt"  style="float:right;margin:2px;background-color:#1E90FF;border:none;border-radius:2px;height:30px;width:15%">SUBMIT</button>
+									<button type="button" class="sbt" value="compile" onclick="compile(this.value)" name="sbt" style="float:right;margin:2px;background-color:#228B22;border:none;border-radius:2px;height:30px;width:15%">COMPILE & RUN</button>
 									<input type="hidden" name="questag" value="<%=questag %>">
 									<input type="hidden" name="ans1" value="<%=ans1 %>">
 						</div>
@@ -267,16 +292,41 @@ if(clg==null)
 </div>
 <script>
 
+		function loadDefault(lang){
+			var q='<%=questag%>';
+			var dat='lang='+lang+'&questag='+q;
+		    $.ajax({
+		         url: 'loadDefault',
+		         data: dat,
+		         type: 'POST',
+		         success: function (result)
+		         {
+		        	 editor.setValue(result);
+		         },
+		         error: function()
+		         {
+		        	 alert('fvn');
+		         }
+		     });
+		}
+
+
+window.onload = function(event) {
+	var c=`<%=dcode%>`;
+	if (c!='null'){
+	editor.setValue(c);}
+};
 	function compile(sbt){ 
 		var frm=$('#resForm');
 		var cd=editor.getValue();
-		var dat='code='+cd+'&'+frm.serialize()+'&sbt='+sbt;
+		var dat='code='+encodeURIComponent(cd)+'&'+frm.serialize()+'&sbt='+sbt;
 	    	$.ajax({
 	    		type: frm.attr('method'),
 				url: frm.attr('action'),
 				data: dat,
 				cache: false,
 			    beforeSend: function(){
+			    	
 			        $('#load').show();
 			        $('#result').hide();
 			        var scrollPos =  $("#load").offset().top;
@@ -298,7 +348,7 @@ if(clg==null)
 				}
 			});
 	    } 
-    var countDownDate = new Date("Aug 31, 2019 15:37:25").getTime();
+    var countDownDate = new Date("Aug 31, 2020 15:37:25").getTime();
 	var x = setInterval(function() {
 	  var now = new Date().getTime();
 	  var distance = countDownDate - now;
